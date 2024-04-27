@@ -36,17 +36,13 @@ class ChatCompletion:
         self.messages = messages
         self.llm = llm
         self.tokenizer = Tokenizer()
+        self.init_messages = messages
 
     def add_message(self, role, content):
         self.messages.append({"role": role, "content": content})
 
     def clear_chat(self):
-        self.messages = [
-            {
-                "role": "system",
-                "content": "You are a helpful assistiant. Your language to answer is German.",
-            }
-        ]
+        self.messages = self.init_messages
 
     def send_message(self, user_input):
         if user_input.lower() == "clear chat":
