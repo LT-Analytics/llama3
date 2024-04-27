@@ -3,31 +3,32 @@ from llama_cpp import Llama
 
 class Tokenizer:
     def __init__(self):
-        self.forbidden_characters = ""
+        self.prefix_system = "system"
+        self.prefix_user = "user"
+        self.suffix_assistant = "assistant"
 
     def encode_system_prompt(self, prompt):
-        return f"<|begin_of_text|><|start_header_id|>system<|end_header_id|>{ prompt }<|eot_id|>"
+        return f"{self.prefix_system}{prompt}"
 
     def encode_user_message(self, message):
-        return f"<|start_header_id|>user<|end_header_id|>{ message }<|eot_id|><|start_header_id|>assistant<|end_header_id|>"
+        return f"{self.prefix_user}{message}{self.suffix_assistant}"
 
     def encode_assistant(self, model_answer):
-        return f"{ model_answer }<|eot_id|>"
+        return model_answer
 
     def encode(self, messages):
-
-        prompt = ""
+        encoded_parts = []
         for message in messages:
             content = message["content"]
             if message["role"] == "system":
-                prompt += self.encode_system_prompt(content)
+                encoded_parts.append(self.encode_system_prompt(content))
             elif message["role"] == "user":
-                prompt += self.encode_user_message(content)
+                encoded_parts.append(self.encode_user_message(content))
             elif message["role"] == "assistant":
-                prompt += self.encode_assistant(content)
+                encoded_parts.append(self.encode_assistant(content))
             else:
                 raise ValueError("Invalid role in message.")
-        return prompt
+        return "".join(encoded_parts)
 
 
 class ChatCompletion:
@@ -100,7 +101,7 @@ def main():
     ]
     # Instanciate the model
     llm = Llama(
-        model_path="models/yourmodel.gguf",
+        model_path="models/Meta-Llama-3-8B-Instruct.Q5_k_m_with_temp_stop_token_fix.gguf",
         verbose=True,
         n_threads=8,
         n_gpu_layers=-1,
