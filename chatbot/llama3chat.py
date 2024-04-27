@@ -14,15 +14,11 @@ class Tokenizer:
     def encode_assistant(self, model_answer):
         return f"{ model_answer }<|eot_id|>"
 
-    def clean_text(self, text):
-
-        return "".join(char for char in text if char not in self.forbidden_characters)
-
     def encode(self, messages):
 
         prompt = ""
         for message in messages:
-            content = self.clean_text(message["content"])
+            content = message["content"]
             if message["role"] == "system":
                 prompt += self.encode_system_prompt(content)
             elif message["role"] == "user":
@@ -67,9 +63,9 @@ class ChatCompletion:
                 "###############################################################################################################################"
             )
 
-            response = llm(
+            response = self.llm(
                 prompt,  # Prompt
-                max_tokens=256,  # Maximum number of tokens to generate
+                max_tokens=8096,  # Maximum number of tokens to generate
                 echo=False,  # Echo the prompt back in the output
                 temperature=1,  # Randomness in Boltzmann distribution
             )
@@ -95,20 +91,25 @@ class ChatBot:
             print("Chatbot terminated by user.")
 
 
-messages = [
-    {
-        "role": "system",
-        "content": "Your are a helpful assistant. Your language to answer is German.",
-    },
-]
-# Instanciate the model
-llm = Llama(
-    model_path="models/Meta-Llama-3-8B-Instruct.Q5_k_m_with_temp_stop_token_fix.gguf",
-    verbose=True,
-    n_threads=8,
-    n_gpu_layers=-1,
-    n_ctx=8096,
-)
+def main():
+    messages = [
+        {
+            "role": "system",
+            "content": "Your are a helpful assistant. Your language to answer is German.",
+        },
+    ]
+    # Instanciate the model
+    llm = Llama(
+        model_path="models/yourmodel.gguf",
+        verbose=True,
+        n_threads=8,
+        n_gpu_layers=-1,
+        n_ctx=8096,
+    )
 
-chat_bot = ChatBot(messages, llm)
-chat_bot.run()
+    chat_bot = ChatBot(messages, llm)
+    chat_bot.run()
+
+
+if __name__ == "__main__":
+    main()
