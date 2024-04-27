@@ -97,7 +97,7 @@ def main():
     ]
     # Instanciate the model
     llm = Llama(
-        model_path="models/Meta-Llama-3-8B-Instruct.Q5_k_m_with_temp_stop_token_fix.gguf",
+        model_path="models/your_model.gguf",
         verbose=True,
         n_threads=8,
         n_gpu_layers=-1,
