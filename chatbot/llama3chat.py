@@ -3,18 +3,16 @@ from llama_cpp import Llama
 
 class Tokenizer:
     def __init__(self):
-        self.prefix_system = "system"
-        self.prefix_user = "user"
-        self.suffix_assistant = "assistant"
+        pass
 
     def encode_system_prompt(self, prompt):
-        return f"{self.prefix_system}{prompt}"
+        return f"<|begin_of_text|><|start_header_id|>system<|end_header_id|>{ prompt }<|eot_id|>"
 
     def encode_user_message(self, message):
-        return f"{self.prefix_user}{message}{self.suffix_assistant}"
+        return f"<|start_header_id|>user<|end_header_id|>{ message }<|eot_id|><|start_header_id|>assistant<|end_header_id|>"
 
     def encode_assistant(self, model_answer):
-        return model_answer
+        return f"{ model_answer }<|eot_id|>"
 
     def encode(self, messages):
         encoded_parts = []
