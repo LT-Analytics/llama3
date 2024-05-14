@@ -1,4 +1,5 @@
 from llama_cpp import Llama
+import copy
 
 
 class Tokenizer:
@@ -34,13 +35,13 @@ class ChatCompletion:
         self.messages = messages
         self.llm = llm
         self.tokenizer = Tokenizer()
-        self.init_messages = messages
+        self.init_messages = copy.deepcopy(messages)
 
     def add_message(self, role, content):
         self.messages.append({"role": role, "content": content})
 
     def clear_chat(self):
-        self.messages = self.init_messages
+        self.messages = copy.deepcopy(self.init_messages)
 
     def send_message(self, user_input):
         if user_input.lower() == "clear chat":
